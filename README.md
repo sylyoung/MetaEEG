@@ -1,4 +1,3 @@
 # Meta-Learning for Fast and Privacy-Preserving Calibration of EEG-based BCIs  
-Welcome! This repository is the official PyTorch implementation of our Meta-Learning for Fast and Privacy-Preserving Calibration of EEG-based BCIs paper at IEEE CIM 2022.  
-Codes will soon be released with documentations :) Please come back at a later time.  
-Old implementations can be found at https://github.com/sylyoung/meta-eeg
+Welcome! This repository is the official PyTorch implementation of our "**Meta-Learning for Fast and Privacy-Preserving Source Knowledge Transfer of EEG-based BCIs**" paper at **IEEE** Computational Intelligence Magazine (**CIM**) - SI 2022.  
+Codes will soon be polished and fully released :) Please check back at a later time.
