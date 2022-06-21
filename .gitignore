@@ -1,0 +1,11 @@
+*.pyc
+__pycache__
+.vscode
+.mypy_cache
+*.py[cod]
+*.sw[px]
+*$py.class
+*.csd
+
+data
+runs
