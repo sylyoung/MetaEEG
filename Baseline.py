@@ -25,7 +25,7 @@ def main(
     device = torch.device('cpu')
     if cuda:
         torch.cuda.manual_seed(seed)
-        device = torch.device('cuda')
+        device = torch.device('cuda:1')
         print('using cuda...')
 
     data = EEG_loader(test_subj=test_subj, dataset=dataset)
@@ -107,13 +107,12 @@ def main(
             # Save the model checkpoint
             torch.save(model, './runs/' + str(dataset) + '/invert_multi_' + model_name + dataset + '_seed' + str(
                 seed) + '_pretrain_model_test_subj_' + str(test_subj) + '_epoch' + str(epoch + 1) + '.pt')
-            # print("--- %s seconds ---" % (time.time() - start_time))
 
 
 if __name__ == '__main__':
 
-    model_name = 'ShallowConvNet'
-    dataset = 'ERP2'
+    model_name = 'EEGNet'
+    dataset = 'MI1'
 
     if dataset == 'MI1':
         subj_num = 9
@@ -130,7 +129,7 @@ if __name__ == '__main__':
             main(test_subj=test_subj,
                  learning_rate=0.001,
                  num_iterations=100,
-                 cuda=False,
+                 cuda=True,
                  seed=seed,
                  dataset=dataset,
                  model_name=model_name,

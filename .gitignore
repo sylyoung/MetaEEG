@@ -6,6 +6,7 @@ __pycache__
 *.sw[px]
 *$py.class
 *.csd
+.idea
 
 data
 runs

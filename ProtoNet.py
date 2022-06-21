@@ -34,7 +34,7 @@ def main(
     device = torch.device('cpu')
     if cuda:
         torch.cuda.manual_seed(seed)
-        device = torch.device('cuda')
+        device = torch.device('cuda:2')
         print('using cuda...')
 
     data = EEG_loader(test_subj=test_subj, dataset=dataset)
@@ -306,15 +306,13 @@ if __name__ == '__main__':
     test_load_epoch = 100
     for subj in range(0, subj_num):
         for se in range(0, 10):
-
             path = './runs/' + str(dataset) + '/protonet_' + str(dataset) + '_test_subj_' + str(subj) + '_' + \
                    str(model_name) + '_num_iterations_' + str(test_load_epoch) + '_seed' + str(se) + '.pth'
-
             print('ProtoNet', dataset, model_name)
             print('subj', subj, 'seed', se)
             main(test_subj=subj,
-                 ways=2, #4 #2
-                 shots=25, #72 #25
+                 ways=ways,
+                 shots=shots,
                  lr=lr,
                  num_iterations=100,
                  cuda=True,

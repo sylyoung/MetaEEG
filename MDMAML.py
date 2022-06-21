@@ -245,8 +245,6 @@ if __name__ == '__main__':
 
     for test_subj in range(0, subj_num):
         for seed in range(0, 10):
-            path = './runs/' + str(dataset) + '/modified_' + str(model_name) + str(dataset) + '_seed' + str(
-                seed) + '_pretrain_model_test_subj_' + str(test_subj) + '.pt'
             print('MDMAML', dataset, model_name)
             print('subj', test_subj, 'seed', seed)
             main(test_subj=test_subj,
