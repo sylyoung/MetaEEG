@@ -34,7 +34,7 @@ def main(
     device = torch.device('cpu')
     if cuda:
         torch.cuda.manual_seed(seed)
-        device = torch.device('cuda:2')
+        device = torch.device('cuda:3')
         print('using cuda...')
 
     data = EEG_loader(test_subj=test_subj, dataset=dataset)
@@ -48,7 +48,7 @@ def main(
             train_y_arr_tmp.append(train_y)
 
         l2l_train_tasks_arr = []
-        meta_batch_size = 32
+        meta_batch_size = 8
         for i in range(len(train_x_arr_tmp)):
             tensor_train_x, tensor_train_y = torch.from_numpy(train_x_arr_tmp[i]).unsqueeze_(3).to(
                 torch.float32), torch.squeeze(torch.from_numpy(train_y_arr_tmp[i]), 1).to(torch.long)
@@ -71,7 +71,7 @@ def main(
             torch.from_numpy(test_y), 1).to(torch.long)
 
         test_dataset = TensorDataset(tensor_test_x, tensor_test_y)
-        test_loader = DataLoader(test_dataset,batch_size=42,shuffle=True,drop_last=True)
+        test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True, drop_last=True)
 
     if model_name == 'ShallowConvNet':
         if dataset == 'MI1':
@@ -142,12 +142,12 @@ def main(
 
             s = dataset + '_test_subj_' + str(test_subj) + '_' + str(model_name)
 
-            if iteration % 10 == 0:
+            if iteration % 50 == 0:
                 print('saving model...')
 
                 torch.save(model,
-                           './runs/' + str(dataset) + '/protonet_' + s + '_num_iterations_' + str(iteration) +
-                           '_seed' + str(se) + '.pth')
+                           './runs/' + str(dataset) + '/protonets_' + s + '_num_iterations_' + str(iteration) +
+                           '_seed' + str(se) + '.pt')
 
     else:
         model = torch.load(path)
@@ -272,54 +272,54 @@ def fast_adapt_test(model, batch, ways, shot, metric=None, device=None):
 
 
 if __name__ == '__main__':
-    model_name = 'EEGNet'
-    dataset = 'MI2'
-    lr = 0.0001
+
+    lr = 0.001
     test = False
+    for model_name in ['EEGNet', 'ShallowConvNet']:
+        for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
+            if dataset == 'MI1':
+                subj_num = 9
+                shots = 576 // (2 * 8 * 4) + 1
+                if test:
+                    shots = 2 # 4 6
+            elif dataset == 'MI2':
+                subj_num = 14
+                shots = 100 // (2 * 8 * 2) + 1
+                if test:
+                    shots = 2 # 4 6
+            elif dataset == 'ERP1':
+                subj_num = 10
+                shots = 192 // (2 * 8 * 2) + 1
+                if test:
+                    shots = 2 # 4 6
+            elif dataset == 'ERP2':
+                subj_num = 16
+                shots = (48 + 52) // (2 * 8 * 2) + 1 # pad to 100
+                if test:
+                    shots = 2 # 4 6
 
-    if dataset == 'MI1':
-        subj_num = 9
-        shots = 72
-        if test:
-            shots = 5
-    elif dataset == 'MI2':
-        subj_num = 14
-        shots = 25
-        if test:
-            shots = 5
-    elif dataset == 'ERP1':
-        subj_num = 10
-        shots = 48
-        if test:
-            shots = 5
-    elif dataset == 'ERP2':
-        subj_num = 16
-        shots = 12
-        if test:
-            shots = 5
+            if dataset == 'MI1':
+                ways = 4
+            else:
+                ways = 2
 
-    if dataset == 'MI1':
-        ways = 4
-    else:
-        ways = 2
-
-    test_load_epoch = 100
-    for subj in range(0, subj_num):
-        for se in range(0, 10):
-            path = './runs/' + str(dataset) + '/protonet_' + str(dataset) + '_test_subj_' + str(subj) + '_' + \
-                   str(model_name) + '_num_iterations_' + str(test_load_epoch) + '_seed' + str(se) + '.pth'
-            print('ProtoNet', dataset, model_name)
-            print('subj', subj, 'seed', se)
-            main(test_subj=subj,
-                 ways=ways,
-                 shots=shots,
-                 lr=lr,
-                 num_iterations=100,
-                 cuda=True,
-                 seed=42,
-                 model_name=model_name,
-                 dataset=dataset,
-                 se=se,
-                 test=test,
-                 path=path,
-                 )
+            test_load_epoch = 100
+            for subj in range(0, subj_num):
+                for se in range(0, 10):
+                    path = './runs/' + str(dataset) + '/protonet_' + str(dataset) + '_test_subj_' + str(subj) + '_' + \
+                           str(model_name) + '_num_iterations_' + str(test_load_epoch) + '_seed' + str(se) + '.pth'
+                    print('ProtoNet', dataset, model_name)
+                    print('subj', subj, 'seed', se)
+                    main(test_subj=subj,
+                         ways=ways,
+                         shots=shots,
+                         lr=lr,
+                         num_iterations=100,
+                         cuda=True,
+                         seed=42,
+                         model_name=model_name,
+                         dataset=dataset,
+                         se=se,
+                         test=test,
+                         path=path,
+                         )

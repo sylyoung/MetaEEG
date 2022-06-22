@@ -166,12 +166,12 @@ def main(
             torch.save(former,
                        './runs/' + str(dataset) + '/mdmaml_model1_' + s + '_num_iterations_' + str(
                            iteration) + 'seed' + str(
-                           se) + '.pth')
+                           se) + '.pt')
 
             torch.save(latter,
                        './runs/' + str(dataset) + '/mdmaml_model2_' + s + '_num_iterations_' + str(
                            iteration) + 'seed' + str(
-                           se) + '.pth')
+                           se) + '.pt')
 
         if cnt == 0:
             print('no match this epoch')
@@ -223,41 +223,39 @@ def fast_adapt(adaptation_batch, evaluation_batch, latter, features1, loss, adap
 
 if __name__ == '__main__':
 
-    model_name = 'EEGNet'
-    dataset = 'MI1'
-
     meta_lr = 0.001
     fast_lr = 0.001
+    for model_name in ['EEGNet', 'ShallowConvNet']:
+        for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
+            if dataset == 'MI1':
+                subj_num = 9
+            elif dataset == 'MI2':
+                subj_num = 14
+            elif dataset == 'ERP1':
+                subj_num = 10
+            elif dataset == 'ERP2':
+                subj_num = 16
 
-    if dataset == 'MI1':
-        subj_num = 9
-    elif dataset == 'MI2':
-        subj_num = 14
-    elif dataset == 'ERP1':
-        subj_num = 10
-    elif dataset == 'ERP2':
-        subj_num = 16
+            if dataset == 'MI1':
+                ways = 4
+            else:
+                ways = 2
 
-    if dataset == 'MI1':
-        ways = 4
-    else:
-        ways = 2
-
-    for test_subj in range(0, subj_num):
-        for seed in range(0, 10):
-            print('MDMAML', dataset, model_name)
-            print('subj', test_subj, 'seed', seed)
-            main(test_subj=test_subj,
-                 ways=ways,
-                 shots=1,
-                 meta_lr=meta_lr,
-                 fast_lr=fast_lr,
-                 meta_batch_size=1,
-                 adaptation_steps=1,
-                 num_iterations=500,
-                 cuda=True,
-                 seed=42,
-                 model_name=model_name,
-                 dataset=dataset,
-                 se=seed,
-                 )
+            for test_subj in range(0, subj_num):
+                for seed in range(0, 10):
+                    print('MDMAML', dataset, model_name)
+                    print('subj', test_subj, 'seed', seed)
+                    main(test_subj=test_subj,
+                         ways=ways,
+                         shots=1,
+                         meta_lr=meta_lr,
+                         fast_lr=fast_lr,
+                         meta_batch_size=1,
+                         adaptation_steps=1,
+                         num_iterations=500,
+                         cuda=True,
+                         seed=42,
+                         model_name=model_name,
+                         dataset=dataset,
+                         se=seed,
+                         )
