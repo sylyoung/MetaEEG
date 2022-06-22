@@ -34,7 +34,7 @@ def main(
     device = torch.device('cpu')
     if cuda:
         torch.cuda.manual_seed(seed)
-        device = torch.device('cuda:3')
+        device = torch.device('cuda:4')
         print('using cuda...')
 
     data = EEG_loader(test_subj=test_subj, dataset=dataset)
@@ -279,22 +279,22 @@ if __name__ == '__main__':
         for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
             if dataset == 'MI1':
                 subj_num = 9
-                shots = 576 // (2 * 8 * 4) + 1
+                shots = 576 // (2 * 4 * 8) + 1
                 if test:
                     shots = 2 # 4 6
             elif dataset == 'MI2':
                 subj_num = 14
-                shots = 100 // (2 * 8 * 2) + 1
+                shots = 100 // (2 * 2 * 8) + 1
                 if test:
                     shots = 2 # 4 6
             elif dataset == 'ERP1':
                 subj_num = 10
-                shots = 192 // (2 * 8 * 2) + 1
+                shots = 96 // (2 * 8) + 1
                 if test:
                     shots = 2 # 4 6
             elif dataset == 'ERP2':
                 subj_num = 16
-                shots = (48 + 52) // (2 * 8 * 2) + 1 # pad to 100
+                shots = (24 + 26) // (2 * 8) + 1 # pad to 50
                 if test:
                     shots = 2 # 4 6
 
