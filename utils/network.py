@@ -5,7 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.utils.weight_norm as weightNorm
 
-from models.EEGNetv1 import EEGNet_features, EEGNet_classifier
+from models.EEGNet import EEGNet_features, EEGNet_classifier
+
 
 # dynamic change the weight of the domain-discriminator
 def calc_coeff(iter_num, alpha=10.0, max_iter=10000.0):
@@ -129,7 +130,7 @@ def backbone_net(args, a, b, c, return_type='y'):
 
     # added
     if return_type == 'z':
-        netC= EEGNet_classifier(a, b, c)
+        netC = EEGNet_classifier(a, b, c)
 
     return netF, netC
 

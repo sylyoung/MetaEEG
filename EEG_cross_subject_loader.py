@@ -4,7 +4,7 @@ import scipy.io as sio
 
 class EEG_loader():
 
-    def __init__(self, test_subj=-1, dataset=None):
+    def __init__(self, test_subj=None, dataset=None):
 
         test_subj = test_subj
         data_folder = './data/' + str(dataset)

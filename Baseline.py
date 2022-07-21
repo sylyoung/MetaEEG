@@ -25,7 +25,7 @@ def main(
     device = torch.device('cpu')
     if cuda:
         torch.cuda.manual_seed(seed)
-        device = torch.device('cuda:0')
+        device = torch.device('cuda:2')
         print('using cuda...')
 
     data = EEG_loader(test_subj=test_subj, dataset=dataset)
@@ -111,26 +111,29 @@ def main(
 
 if __name__ == '__main__':
 
-    model_name = 'ShallowConvNet'
-    for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
-        if dataset == 'MI1':
-            subj_num = 9
-        elif dataset == 'MI2':
-            subj_num = 14
-        elif dataset == 'ERP1':
-            subj_num = 10
-        elif dataset == 'ERP2':
-            subj_num = 16
+    lr = 0.001
+    num_iterations = 100
+    for model_name in ['EEGNet', 'ShallowConvNet']:
+        for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
+            if dataset == 'MI1':
+                subj_num = 9
+            elif dataset == 'MI2':
+                subj_num = 14
+            elif dataset == 'ERP1':
+                subj_num = 10
+            elif dataset == 'ERP2':
+                subj_num = 16
 
-        for test_subj in range(0, subj_num):
-            for seed in range(0, 10):
-                print('subj', test_subj, 'seed', seed)
-                main(test_subj=test_subj,
-                     learning_rate=0.001,
-                     num_iterations=100,
-                     cuda=True,
-                     seed=seed,
-                     dataset=dataset,
-                     model_name=model_name,
-                     save=True,
-                     )
+            for test_subj in range(0, subj_num):
+                for seed in range(0, 10):
+                    print('Baseline', model_name, dataset)
+                    print('subj', test_subj, 'seed', seed)
+                    main(test_subj=test_subj,
+                         learning_rate=lr,
+                         num_iterations=num_iterations,
+                         cuda=True,
+                         seed=42,
+                         dataset=dataset,
+                         model_name=model_name,
+                         save=True,
+                         )

@@ -274,6 +274,7 @@ def fast_adapt_test(model, batch, ways, shot, metric=None, device=None):
 if __name__ == '__main__':
 
     lr = 0.001
+    num_iterations = 100
     test = False
     for model_name in ['EEGNet', 'ShallowConvNet']:
         for dataset in ['MI1', 'MI2', 'ERP1', 'ERP2']:
@@ -314,7 +315,7 @@ if __name__ == '__main__':
                          ways=ways,
                          shots=shots,
                          lr=lr,
-                         num_iterations=100,
+                         num_iterations=num_iterations,
                          cuda=True,
                          seed=42,
                          model_name=model_name,

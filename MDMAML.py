@@ -160,18 +160,6 @@ def main(
                 meta_train_accuracy += train_accuracy.item()
 
         print('Iteration', iteration)
-        if iteration % 50 == 0:
-            print('saving model...')
-
-            torch.save(former,
-                       './runs/' + str(dataset) + '/mdmaml_model1_' + s + '_num_iterations_' + str(
-                           iteration) + 'seed' + str(
-                           se) + '.pt')
-
-            torch.save(latter,
-                       './runs/' + str(dataset) + '/mdmaml_model2_' + s + '_num_iterations_' + str(
-                           iteration) + 'seed' + str(
-                           se) + '.pt')
 
         if cnt == 0:
             print('no match this epoch')
@@ -184,6 +172,19 @@ def main(
             meta_lr) + '_fast_lr_' + \
             str(fast_lr) + '_meta_batch_size_' + str(meta_batch_size) + '_adaptation_steps_' + str(
             adaptation_steps) + str(model_name)
+
+        if iteration % 50 == 0:
+            print('saving model...')
+
+            torch.save(former,
+                       './runs/' + str(dataset) + '/mdmaml_model1_' + s + '_num_iterations_' + str(
+                           iteration) + 'seed' + str(
+                           se) + '.pt')
+
+            torch.save(latter,
+                       './runs/' + str(dataset) + '/mdmaml_model2_' + s + '_num_iterations_' + str(
+                           iteration) + 'seed' + str(
+                           se) + '.pt')
 
         # Average the accumulated gradients and optimize
         for p in all_parameters:

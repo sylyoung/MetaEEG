@@ -55,13 +55,13 @@ def lr_scheduler_full(optimizer, init_lr, iter_num, max_iter, gamma=10, power=0.
         param_group['nesterov'] = True
     return optimizer
 
-def cal_auc_roc(loader, netF, netC):
+def cal_auc_roc(loader, netF, netC, device):
     start_test = True
     with tr.no_grad():
         iter_test = iter(loader)
         for i in range(len(loader)):
             data = iter_test.next()
-            inputs = data[0].cuda()
+            inputs = data[0].to(device)
             labels = data[1].float()
             outputs = netC(netF(inputs))
             if start_test:
@@ -81,13 +81,13 @@ def cal_auc_roc(loader, netF, netC):
 
     return score * 100
 
-def cal_acc(loader, netF, netC):
+def cal_acc(loader, netF, netC, device):
     start_test = True
     with tr.no_grad():
         iter_test = iter(loader)
         for i in range(len(loader)):
             data = iter_test.next()
-            inputs = data[0].cuda()
+            inputs = data[0].to(device)
             labels = data[1].float()
             outputs = netC(netF(inputs))
             if start_test:
@@ -105,7 +105,7 @@ def cal_acc(loader, netF, netC):
     return accuracy * 100
 
 
-def cal_acc_comb(loader, model, flag=True, fc=None):
+def cal_acc_comb(loader, model, flag=True, fc=None, device=None):
     print('here1')
     start_test = True
     with tr.no_grad():
@@ -114,7 +114,7 @@ def cal_acc_comb(loader, model, flag=True, fc=None):
             data = iter_test.next()
             inputs = data[0]
             labels = data[1]
-            inputs = inputs.cuda()
+            inputs = inputs.to(device)
             if flag:
                 _, outputs = model(inputs)
             else:
@@ -146,7 +146,7 @@ def cal_acc_comb(loader, model, flag=True, fc=None):
     return acc * 100, sen * 100, spec * 100, auc * 100
 
 
-def cal_acc_multi(loader, netF_list, netC_list, args, weight_epoch=None, netG_list=None):
+def cal_acc_multi(loader, netF_list, netC_list, args, weight_epoch=None, netG_list=None, device=None):
     print('here2')
     num_src = len(netF_list)
     for i in range(len(netF_list)): netF_list[i].eval()
@@ -157,14 +157,14 @@ def cal_acc_multi(loader, netF_list, netC_list, args, weight_epoch=None, netG_li
             # tmp_weight = np.round(tr.squeeze(domain_weight, 0).t().cpu().detach().numpy().flatten(), 3)
             # print('\ntest domain weight: ', tmp_weight)
     else:
-        domain_weight = tr.Tensor([1 / num_src] * num_src).reshape([1, num_src, 1]).cuda()
+        domain_weight = tr.Tensor([1 / num_src] * num_src).reshape([1, num_src, 1]).to(device)
 
     start_test = True
     with tr.no_grad():
         iter_test = iter(loader)
         for _ in range(len(loader)):
             data = iter_test.next()
-            inputs, labels = data[0].cuda(), data[1]
+            inputs, labels = data[0].to(device), data[1]
 
             if args.use_weight:
                 if args.method == 'decision':
@@ -176,11 +176,11 @@ def cal_acc_multi(loader, netF_list, netC_list, args, weight_epoch=None, netG_li
                     z = tr.sum(weights_all, dim=1) + 1e-16
                     weights_all = tr.transpose(tr.transpose(weights_all, 0, 1) / z, 0, 1)
                     weights_domain = tr.sum(weights_all, dim=0) / tr.sum(weights_all)
-                    domain_weight = weights_domain.reshape([1, num_src, 1]).cuda()
+                    domain_weight = weights_domain.reshape([1, num_src, 1]).to(device)
 
-            outputs_all = tr.cat([netC_list[i](netF_list[i](inputs)).unsqueeze(1) for i in range(num_src)], 1).cuda()
+            outputs_all = tr.cat([netC_list[i](netF_list[i](inputs)).unsqueeze(1) for i in range(num_src)], 1).to(device)
             preds = tr.softmax(outputs_all, dim=2)
-            outputs_all_w = (preds * domain_weight).sum(dim=1).cuda()
+            outputs_all_w = (preds * domain_weight).sum(dim=1).to(device)
 
             if start_test:
                 all_output = outputs_all_w.float().cpu()
